@@ -1,0 +1,8 @@
+# Project Tracks
+
+This file tracks all major tracks for the project. Each track has its own detailed plan in its respective folder.
+
+---
+
+- [ ] **Track: Build the core Jarvis conversational loop**
+  *Link: [./tracks/jarvis_loop_20260129/](./tracks/jarvis_loop_20260129/)*

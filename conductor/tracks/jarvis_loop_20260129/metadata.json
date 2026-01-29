@@ -1,0 +1,8 @@
+{
+  "track_id": "jarvis_loop_20260129",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-01-29T06:05:00Z",
+  "updated_at": "2026-01-29T06:05:00Z",
+  "description": "Build the core Jarvis conversational loop integrating Whisper, Shell, and Piper."
+}
