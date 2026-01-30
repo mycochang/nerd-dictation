@@ -2,7 +2,7 @@
 
 ## Phase 1: Foundation
 - [x] Task: Create robust transcription script using faster-whisper 0c1ec57
-- [ ] Task: Create shell execution wrapper with output capturing
+- [x] Task: Create shell execution wrapper with output capturing 520e07d
 - [ ] Task: Implement Piper TTS feedback integration
 - [ ] Task: Conductor - User Manual Verification 'Foundation' (Protocol in workflow.md)
 
