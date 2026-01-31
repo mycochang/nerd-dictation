@@ -19,3 +19,6 @@ Offline Speech to Text for Desktop Linux using VOSK-API.
 - **Configurable Voice Macros:** Allow voice commands to trigger specific agent actions, context switches, or complex prompt templates.
 - **Voice Feedback Loop:** Integrated Text-to-Speech (TTS) that reads CLI agent responses back to the user, creating a conversational loop.
 - **Agent Integration:** Specialized support for piping voice input into and reading output from Gemini, Claude, and OpenCode CLI tools.
+
+## Implemented Modules
+- **Jarvis Loop:** A secure, local voice-to-text pipeline that uses `faster-whisper` for transcription and `ydotool` for typing directly into the active window, effectively acting as a "Voice Keyboard" for any application.
