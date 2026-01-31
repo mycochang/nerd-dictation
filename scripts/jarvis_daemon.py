@@ -6,9 +6,9 @@ import time
 from faster_whisper import WhisperModel
 
 # Configuration
-MODEL_SIZE = "small.en"
-DEVICE = "cuda" # Default to GPU for the daemon
-COMPUTE_TYPE = "float16" 
+MODEL_SIZE = "tiny.en"
+DEVICE = "cpu" 
+COMPUTE_TYPE = "int8" 
 RUNTIME_DIR = os.environ.get('XDG_RUNTIME_DIR', '/tmp')
 SOCKET_PATH = os.path.join(RUNTIME_DIR, "jarvis.sock")
 IDLE_TIMEOUT = 3600 # 1 hour in seconds
