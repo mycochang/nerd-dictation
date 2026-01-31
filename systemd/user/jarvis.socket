@@ -1,0 +1,9 @@
+[Unit]
+Description=Jarvis Transcription Socket
+
+[Socket]
+ListenStream=%t/jarvis.sock
+SocketMode=0600
+
+[Install]
+WantedBy=sockets.target
