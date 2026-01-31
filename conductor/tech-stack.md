@@ -2,7 +2,7 @@
 
 ## Core Technologies
 - **Language:** Python (>= 3.8)
-- **Speech-to-Text (STT):** faster-whisper (CPU/GPU accelerated offline transcription)
+- **Speech-to-Text (STT):** faster-whisper (Optimized for CPU with int8 quantization)
 - **Daemon:** Python persistent process managed by `systemd` (User Service)
 - **IPC:** Unix Domain Sockets for secure, local client-server communication
 - **Audio Handling:** `parecord` (PulseAudio/PipeWire)
