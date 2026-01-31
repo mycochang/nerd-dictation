@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Configuration
+export YDOTOOL_SOCKET="/tmp/.ydotool_socket"
+export PYTHONPATH="$HOME/repos/nerd-dictation" # Ensure scripts can import each other
+PATH=$PATH:/usr/bin:/usr/local/bin:/home/mchang/miniconda3/bin
+
+# Files
+AUDIO_FILE="/tmp/jarvis_command.wav"
+PID_FILE="/tmp/jarvis.pid"
+
+# Scripts
+TRANSCRIBER="$HOME/repos/nerd-dictation/scripts/transcribe.py"
+TYPER="$HOME/repos/nerd-dictation/scripts/type_input.py"
+SPEAKER="$HOME/repos/nerd-dictation/scripts/speak.py"
+
+function notify() {
+    notify-send "Jarvis" "$1" -t 1000
+}
+
+# Toggle Logic
+if [ -f "$PID_FILE" ]; then
+    # === STOP ===
+    PID=$(cat "$PID_FILE")
+    if ps -p "$PID" > /dev/null; then
+        kill "$PID"
+    fi
+    rm -f "$PID_FILE"
+    
+    # Feedback
+    aplay -q "$HOME/.local/share/voice_assistant/mic_off.wav" 2>/dev/null &
+    notify "Processing..."
+    
+    # Transcribe
+    TEXT=$(python3 "$TRANSCRIBER" "$AUDIO_FILE")
+    
+    # Type
+    python3 "$TYPER" "$TEXT"
+    
+else
+    # === START ===
+    rm -f "$AUDIO_FILE"
+    
+    # Feedback
+    aplay -q "$HOME/.local/share/voice_assistant/mic_on.wav" 2>/dev/null &
+    notify "Listening..."
+    
+    # Mic Setup (Safety)
+    MIC="alsa_input.pci-0000_07_00.6.HiFi__Mic1__source"
+    pactl set-source-mute "$MIC" 0 2>/dev/null
+    pactl set-source-volume "$MIC" 100% 2>/dev/null
+
+    # Record
+    parecord --device="$MIC" --file-format=wav "$AUDIO_FILE" &
+    echo $! > "$PID_FILE"
+fi
