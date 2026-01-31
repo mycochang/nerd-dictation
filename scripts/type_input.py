@@ -17,6 +17,8 @@ def type_text(text):
         if "YDOTOOL_SOCKET" not in env:
             env["YDOTOOL_SOCKET"] = "/tmp/.ydotool_socket"
             
+        print(f"DEBUG: Typing '{text}' using socket {env['YDOTOOL_SOCKET']}", file=sys.stderr)
+            
         # Type the text
         subprocess.run(["ydotool", "type", text], env=env, check=True)
         

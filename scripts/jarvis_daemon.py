@@ -9,7 +9,8 @@ from faster_whisper import WhisperModel
 MODEL_SIZE = "small.en"
 DEVICE = "cuda" # Default to GPU for the daemon
 COMPUTE_TYPE = "float16" 
-SOCKET_PATH = "/tmp/jarvis.sock"
+RUNTIME_DIR = os.environ.get('XDG_RUNTIME_DIR', '/tmp')
+SOCKET_PATH = os.path.join(RUNTIME_DIR, "jarvis.sock")
 IDLE_TIMEOUT = 3600 # 1 hour in seconds
 
 class JarvisDaemon:
@@ -30,15 +31,22 @@ class JarvisDaemon:
             self.model = WhisperModel(MODEL_SIZE, device="cpu", compute_type="int8")
 
         # Setup Socket
-        if os.path.exists(self.socket_path):
-            os.remove(self.socket_path)
+        if os.environ.get('LISTEN_FDS'):
+            # Systemd socket activation
+            print("Systemd socket activation detected.")
+            self.server = socket.fromfd(3, socket.AF_UNIX, socket.SOCK_STREAM)
+            # systemd-passed sockets are already bound and listening
+        else:
+            # Manual startup
+            if os.path.exists(self.socket_path):
+                os.remove(self.socket_path)
+                
+            self.server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            self.server.bind(self.socket_path)
+            os.chmod(self.socket_path, 0o600) # Secure permissions
+            self.server.listen(1)
             
-        self.server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.server.settimeout(10.0) # Check for idle timeout every 10 seconds
-        self.server.bind(self.socket_path)
-        os.chmod(self.socket_path, 0o600) # Secure permissions
-        self.server.listen(1)
-        
         print(f"Listening on {self.socket_path}")
 
     def handle_client(self, client_socket):

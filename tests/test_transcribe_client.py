@@ -23,7 +23,12 @@ class TestTranscribeClient(unittest.TestCase):
         # Mock server response
         mock_client.recv.return_value = b"Hello Daemon"
         
-        result = transcribe_audio_client("/tmp/audio.wav")
+        # Patch the SOCKET_PATH constant in scripts.transcribe or patch environ before import
+        # Since module is already imported, we might need to reload or patch the constant directly
+        # Or better: patch os.path.join used in transcribe.py if possible? No.
+        # Patch scripts.transcribe.SOCKET_PATH
+        with patch('scripts.transcribe.SOCKET_PATH', "/tmp/jarvis.sock"):
+            result = transcribe_audio_client("/tmp/audio.wav", socket_path="/tmp/jarvis.sock")
         
         # Verify connection
         mock_client.connect.assert_called_with("/tmp/jarvis.sock")

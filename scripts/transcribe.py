@@ -7,7 +7,9 @@ from faster_whisper import WhisperModel
 MODEL_SIZE = "small.en" # Keeping small since we want better accuracy if we fall back
 DEVICE = "cpu"
 COMPUTE_TYPE = "int8"
-SOCKET_PATH = "/tmp/jarvis.sock"
+# Get the systemd runtime dir if available, fallback to /tmp
+RUNTIME_DIR = os.environ.get('XDG_RUNTIME_DIR', '/tmp')
+SOCKET_PATH = os.path.join(RUNTIME_DIR, "jarvis.sock")
 
 def transcribe_audio_client(audio_file, socket_path=SOCKET_PATH):
     """
