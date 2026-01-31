@@ -6,3 +6,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Build the core Jarvis conversational loop**
   *Link: [./tracks/jarvis_loop_20260129/](./tracks/jarvis_loop_20260129/)*
+
+---
+
+- [ ] **Track: Jarvis Daemon & Resource Guard**
+  *Link: [./tracks/jarvis_daemon_20260129/](./tracks/jarvis_daemon_20260129/)*
