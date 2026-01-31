@@ -2,7 +2,7 @@
 
 ## Phase 1: Resource Guard & Daemon
 - [x] Task: Create `scripts/monitor_resources.sh` to log GPU/CPU footprint 050dfda
-- [ ] Task: Implement `scripts/jarvis_daemon.py` (Unix Socket Server + Model Persistence)
+- [x] Task: Implement `scripts/jarvis_daemon.py` (Unix Socket Server + Model Persistence) 356b808
 - [ ] Task: Update `scripts/transcribe.py` to act as a lightweight Socket Client
 - [ ] Task: Conductor - User Manual Verification 'Resource Guard & Daemon' (Protocol in workflow.md)
 
