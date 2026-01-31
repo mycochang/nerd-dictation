@@ -93,6 +93,28 @@ class TestJarvisDaemon(unittest.TestCase):
     @patch('scripts.jarvis_daemon.WhisperModel')
     @patch('socket.socket')
     @patch('os.chmod')
+    def test_run_loop_timeout(self, mock_chmod, mock_socket, mock_model):
+        daemon = JarvisDaemon("/tmp/test.sock")
+        daemon.server = MagicMock()
+        
+        # Simulate socket.timeout
+        daemon.server.accept.side_effect = socket.timeout
+        
+        # Set last_active to long ago
+        daemon.last_active = 0 
+        
+        # Mock stop to change running state and avoid infinite loop
+        def mock_stop(*args, **kwargs):
+            daemon.running = False
+        daemon.stop = MagicMock(side_effect=mock_stop)
+        
+        daemon.run()
+        
+        daemon.stop.assert_called_once()
+
+    @patch('scripts.jarvis_daemon.WhisperModel')
+    @patch('socket.socket')
+    @patch('os.chmod')
     @patch('sys.exit')
     def test_stop(self, mock_exit, mock_chmod, mock_socket, mock_model):
         daemon = JarvisDaemon("/tmp/test.sock")

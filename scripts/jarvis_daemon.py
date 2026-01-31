@@ -2,6 +2,7 @@ import socket
 import os
 import sys
 import signal
+import time
 from faster_whisper import WhisperModel
 
 # Configuration
@@ -9,12 +10,14 @@ MODEL_SIZE = "small.en"
 DEVICE = "cuda" # Default to GPU for the daemon
 COMPUTE_TYPE = "float16" 
 SOCKET_PATH = "/tmp/jarvis.sock"
+IDLE_TIMEOUT = 3600 # 1 hour in seconds
 
 class JarvisDaemon:
     def __init__(self, socket_path=SOCKET_PATH):
         self.socket_path = socket_path
         self.running = True
         self.model = None
+        self.last_active = time.time()
         
         # Load Model
         print(f"Loading {MODEL_SIZE} model on {DEVICE}...")
@@ -31,6 +34,7 @@ class JarvisDaemon:
             os.remove(self.socket_path)
             
         self.server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.server.settimeout(10.0) # Check for idle timeout every 10 seconds
         self.server.bind(self.socket_path)
         os.chmod(self.socket_path, 0o600) # Secure permissions
         self.server.listen(1)
@@ -38,6 +42,7 @@ class JarvisDaemon:
         print(f"Listening on {self.socket_path}")
 
     def handle_client(self, client_socket):
+        self.last_active = time.time()
         try:
             # Receive audio file path
             data = client_socket.recv(1024).decode('utf-8').strip()
@@ -69,10 +74,17 @@ class JarvisDaemon:
         signal.signal(signal.SIGINT, self.stop)
         signal.signal(signal.SIGTERM, self.stop)
         
+        print(f"Daemon started. Will exit after {IDLE_TIMEOUT/60} minutes of inactivity.")
+        
         while self.running:
             try:
                 client, _ = self.server.accept()
                 self.handle_client(client)
+            except socket.timeout:
+                # Check idle timeout
+                if time.time() - self.last_active > IDLE_TIMEOUT:
+                    print(f"Idle timeout reached ({IDLE_TIMEOUT}s). Shutting down.")
+                    self.stop()
             except OSError:
                 break
             except Exception as e:
@@ -81,7 +93,10 @@ class JarvisDaemon:
     def stop(self, signum=None, frame=None):
         print("Stopping daemon...")
         self.running = False
-        self.server.close()
+        try:
+            self.server.close()
+        except:
+            pass
         if os.path.exists(self.socket_path):
             os.remove(self.socket_path)
         sys.exit(0)
