@@ -11,3 +11,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Jarvis Daemon & Resource Guard**
   *Link: [./tracks/jarvis_daemon_20260129/](./tracks/jarvis_daemon_20260129/)*
+
+---
+
+- [ ] **Track: Jarvis Optimization: CPU Migration**
+  *Link: [./tracks/jarvis_cpu_migration_20260129/](./tracks/jarvis_cpu_migration_20260129/)*

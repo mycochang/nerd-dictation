@@ -1,0 +1,8 @@
+{
+  "track_id": "jarvis_cpu_migration_20260129",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-01-31T19:03:10Z",
+  "updated_at": "2026-01-31T19:03:10Z",
+  "description": "Migrate Jarvis Daemon to CPU-only inference to resolve GPU display conflicts."
+}
