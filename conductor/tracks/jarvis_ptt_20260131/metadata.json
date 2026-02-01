@@ -1,0 +1,8 @@
+{
+  "track_id": "jarvis_ptt_20260131",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-01-31T22:57:26Z",
+  "updated_at": "2026-01-31T22:57:26Z",
+  "description": "Implement PTT (Hold-to-Talk) functionality for Jarvis using global key release detection."
+}

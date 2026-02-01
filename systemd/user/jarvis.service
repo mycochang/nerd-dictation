@@ -5,7 +5,7 @@ After=jarvis.socket
 
 [Service]
 # Path to your conda or system python
-ExecStart=/home/mchang/miniconda3/bin/python3 /home/mchang/repos/nerd-dictation/scripts/jarvis_daemon.py
+ExecStart=%h/miniconda3/bin/python3 %h/repos/nerd-dictation/scripts/jarvis_daemon.py
 StandardOutput=journal
 StandardError=journal
 

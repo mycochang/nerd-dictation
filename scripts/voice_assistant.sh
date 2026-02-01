@@ -1,19 +1,19 @@
 #!/bin/bash
 
-# DEBUG LOGGING
-LOG="/tmp/jarvis_debug.log"
+# Configuration
+export YDOTOOL_SOCKET="/tmp/.ydotool_socket"
+export PYTHONPATH="$HOME/repos/nerd-dictation"
+PATH=$PATH:/usr/bin:/usr/local/bin:$HOME/miniconda3/bin
+
+# Files
+RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp}"
+LOG="$RUNTIME_DIR/jarvis_debug.log"
 exec 2>>"$LOG" # Redirect stderr to log
 
 echo "--- $(date) ---" >> "$LOG"
 
-# Configuration
-export YDOTOOL_SOCKET="/tmp/.ydotool_socket"
-export PYTHONPATH="$HOME/repos/nerd-dictation"
-PATH=$PATH:/usr/bin:/usr/local/bin:/home/mchang/miniconda3/bin
-
-# Files
-AUDIO_FILE="/tmp/jarvis_command.wav"
-PID_FILE="/tmp/jarvis.pid"
+AUDIO_FILE="$RUNTIME_DIR/jarvis_command.wav"
+PID_FILE="$RUNTIME_DIR/jarvis.pid"
 
 # Absolute Paths
 TRANSCRIBER="$HOME/repos/nerd-dictation/scripts/transcribe.py"
@@ -39,7 +39,7 @@ if [ -f "$PID_FILE" ]; then
     # Transcribe
     echo "Action: Transcribing..." >> "$LOG"
     START_TIME=$(date +%s%N)
-    TEXT=$(/home/mchang/miniconda3/bin/python3 "$TRANSCRIBER" "$AUDIO_FILE")
+    TEXT=$($HOME/miniconda3/bin/python3 "$TRANSCRIBER" "$AUDIO_FILE")
     END_TIME=$(date +%s%N)
     DURATION=$(( ($END_TIME - $START_TIME) / 1000000 ))
     echo "Transcription Result ($DURATION ms): '$TEXT'" >> "$LOG"
@@ -47,7 +47,7 @@ if [ -f "$PID_FILE" ]; then
     # Type
     if [ -n "$TEXT" ]; then
         echo "Action: Typing..." >> "$LOG"
-        /home/mchang/miniconda3/bin/python3 "$TYPER" "$TEXT"
+        $HOME/miniconda3/bin/python3 "$TYPER" "$TEXT"
         notify "Done."
     else
         echo "Warning: Empty transcription." >> "$LOG"

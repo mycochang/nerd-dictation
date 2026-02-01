@@ -2,7 +2,7 @@
 
 # Configuration
 export YDOTOOL_SOCKET="/tmp/.ydotool_socket"
-PATH=$PATH:/usr/bin:/usr/local/bin:/home/mchang/miniconda3/bin
+PATH=$PATH:/usr/bin:/usr/local/bin:$HOME/miniconda3/bin
 
 # Files
 AUDIO_FILE="/tmp/cli_command.wav"

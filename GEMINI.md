@@ -76,3 +76,12 @@ The project includes unit tests, specifically for text-to-digit conversion logic
     ```
 *   **Linting:** Uses `pylint` with specific suppressions (see `hacking.rst` for the full command).
 *   **Logging:** All status/debug messages must be printed to `sys.stderr` to avoid interfering with `stdout` text output.
+
+### Security & Privacy
+
+*   **No Hardcoded Paths:** NEVER hardcode the user's home directory (e.g., `/home/mchang`). 
+    *   In **Shell Scripts**, use `$HOME`.
+    *   In **Systemd Units**, use `%h`.
+    *   In **Python**, use `os.path.expanduser("~")`.
+*   **Data Sanitization:** Ensure all scripts and documentation are sanitized of personal identifiers before committing or pushing to public repositories.
+

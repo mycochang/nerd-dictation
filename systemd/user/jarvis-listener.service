@@ -1,0 +1,13 @@
+[Unit]
+Description=Jarvis PTT Keyboard Listener
+After=multi-user.target
+
+[Service]
+# Ensure we use system python which has evdev installed
+# Wrap in 'sg input' to force effective group membership without logout
+ExecStart=/usr/bin/sg input -c "/usr/bin/python3 %h/repos/nerd-dictation/scripts/jarvis_listener.py"
+Restart=on-failure
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=default.target

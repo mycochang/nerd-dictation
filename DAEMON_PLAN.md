@@ -24,7 +24,7 @@ If we open a port (e.g., `localhost:8080`), any app on your machine (browser scr
 ### Mitigation: Unix Domain Sockets
 We will NOT use TCP ports. We will use a **Unix Domain Socket** (`/tmp/jarvis.sock`).
 *   **Why:** File-system permissions apply.
-*   **Lockdown:** `chmod 600 /tmp/jarvis.sock`. Only **your user** (mchang) can write to it. No other user, no remote attacker.
+*   **Lockdown:** `chmod 600 /tmp/jarvis.sock`. Only **your user** can write to it. No other user, no remote attacker.
 *   **No Execution:** The daemon ONLY accepts `.wav` file paths. It strictly does `File -> Text -> Type`. It never executes.
 
 ## 3. The Implementation Plan (Conductor Track)

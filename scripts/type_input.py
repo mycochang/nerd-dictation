@@ -15,7 +15,8 @@ def type_text(text):
         # Ensure YDOTOOL_SOCKET is set
         env = os.environ.copy()
         if "YDOTOOL_SOCKET" not in env:
-            env["YDOTOOL_SOCKET"] = "/tmp/.ydotool_socket"
+            runtime_dir = os.environ.get("XDG_RUNTIME_DIR", "/tmp")
+            env["YDOTOOL_SOCKET"] = os.path.join(runtime_dir, ".ydotool_socket")
             
         print(f"DEBUG: Typing '{text}' using socket {env['YDOTOOL_SOCKET']}", file=sys.stderr)
             

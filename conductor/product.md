@@ -22,3 +22,4 @@ Offline Speech to Text for Desktop Linux using VOSK-API.
 
 ## Implemented Modules
 - **Jarvis Loop:** A secure, local voice-to-text pipeline that uses `faster-whisper` for transcription and `ydotool` for typing directly into the active window, effectively acting as a "Voice Keyboard" for any application.
+- **Push-to-Talk (PTT):** A `python-evdev` based listener that enables Walkie-Talkie style interactions (Hold `Meta+Z` to talk) on Wayland, bypassing standard desktop shortcut limitations.

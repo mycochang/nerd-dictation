@@ -1,88 +1,106 @@
-# Jarvis Architecture: Current vs. Ideal
+# Jarvis System Architecture (v3.0 - PTT & CPU Daemon)
 
-## 1. The Current "Cold Start" Architecture (What we built)
-Right now, your system is "Serverless" (Script-based). It spins up the entire brain from scratch every time you press `Meta+Z`.
+## Component Diagram (Mermaid)
 
-```ascii
-[ User ] -> Press Meta+Z
-    |
-    v
-[ bash script ] (Launches)
-    |
-    +-> [ parecord ] (Records Audio) -> [ .wav file ]
-    |
-    v
-[ python3 ] (Launches VM) <-- 🛑 SLOW STEP 1 (0.5s)
-    |
-    +-> [ import faster_whisper ] (Loads Libraries) <-- 🛑 SLOW STEP 2 (1.0s)
-    |
-    +-> [ Model Load ] (Read 500MB from Disk -> RAM) <-- 🛑 SLOW STEP 3 (2-5s)
-    |
-    +-> [ GPU/CPU Inference ] (Transcribes) -> "Text"
-    |
-    v
-[ ydotool ] (Types) -> [ Active Window ]
-    |
-    v
-[ Exit ] (Everything dies, Memory cleared)
+```mermaid
+graph TD
+    User((User)) -->|Hold Meta+Z| Listener[Jarvis Listener Service]
+    User -->|Release Meta+Z| Listener
+    
+    subgraph "Trigger Layer"
+        Listener -->|Spawn| Handler[PTT Handler Script]
+    end
+    
+    subgraph "Control Layer"
+        Handler -->|Start| Recorder[parecord]
+        Recorder -->|Audio File| WavFile[/tmp/jarvis_ptt.wav]
+        Handler -->|Stop| Recorder
+        Handler -->|Transcribe| Transcriber[Transcribe Client]
+    end
+    
+    subgraph "Intelligence Layer (Daemon)"
+        Transcriber -->|Socket Path| Socket((Unix Socket))
+        Socket -->|Wake Up| Daemon[Jarvis Daemon Service]
+        Daemon -->|Load Model| Model[Faster Whisper CPU]
+        WavFile --> Daemon
+        Daemon -->|Text| Transcriber
+    end
+    
+    subgraph "Action Layer"
+        Transcriber -->|Text| Typer[Type Input Script]
+        Typer -->|Socket| Ydotool[ydotoold]
+        Ydotool -->|Keystrokes| Window[Active Window]
+    end
 ```
 
-*   **Pros:** Simple, robust, zero RAM usage when idle.
-*   **Cons:** High Latency (3-5s minimum). The "Brain" has to wake up, get dressed, and drink coffee *every single time* you speak.
-
----
-
-## 2. The "Daemon" Architecture (The Speed Upgrade)
-To get "Siri-like" instant response, we need to keep the Brain (Whisper Model) alive in VRAM (GPU Memory) constantly.
-
+## High-Level Flow (ASCII)
 ```ascii
-[ SYSTEM BOOT ]
-    |
-    v
-[ Jarvis Daemon ] (Python Process)
-    |
-    +-> [ Load Model to GPU VRAM ] (Done once. Stays warm.)
-    |
-    +-> [ Listening on Socket ] (Waiting for signal...)
-            ^
-            |
-            | (Instant Connection)
-            |
-[ User ] -> Press Meta+Z -> [ Client Script ] -> [ parecord ] -> [ Send Audio Path ]
-                                                                        |
-                                                                        v
-                                                               [ Daemon ] -> [ Transcribe ] (Instant)
-                                                                        |
-                                                                        v
-                                                               [ ydotool ] -> [ Active Window ]
+                                [ KEYBOARD (Hardware) ]
+                                         |
+                                         v
+                                [ /dev/input/eventX ]
+                                         |
+                                         v
+                          +-----------------------------+
+                          |   jarvis-listener.service   |
+                          | (Systemd User Service)      |
+                          +-----------------------------+
+                                         |
+                                         |  <-- Uses: /usr/bin/python3 (System Python)
+                                         |      Deps: python-evdev (via Pacman/Paru)
+                                         |      User: <user> (input group)
+                                         |
+                                         v
+                          +-----------------------------+
+                          |    jarvis_ptt_handler.sh    | <---- (Lives in ~/scripts/)
+                          +-----------------------------+
+                                 /               \
+                                / (Start)         \ (Stop)
+                               /                   \
+                              v                     v
+[ parecord ] ----------------+                     [ python3 scripts/transcribe.py ]
+(Records to /tmp/jarvis.wav)                       |  <-- Uses: $HOME/miniconda3/bin/python3
+(System Binary)                                    |      Deps: faster-whisper (via Pip/Conda)
+                                                   |      
+                                                   | (Sends Path via Unix Socket)
+                                                   v
+                                     +-----------------------------+
+                                     |       jarvis.service        |
+                                     |      (Jarvis Daemon)        |
+                                     +-----------------------------+
+                                     |  <-- Uses: $HOME/miniconda3/bin/python3
+                                     |      Deps: faster-whisper, ctranslate2 (Pip/Conda)
+                                     |  * Runs in Background       |
+                                     |  * Holds Model in RAM (CPU) |
+                                     |  * Listens on jarvis.sock   |
+                                     +-----------------------------+
+                                                   |
+                                                   | (Returns Text)
+                                                   v
+                                     +-----------------------------+
+                                     |    scripts/type_input.py    |
+                                     +-----------------------------+
+                                                   |
+                                                   | (Sends Keystrokes)
+                                                   v
+                                     +-----------------------------+
+                                     |          ydotoold           |
+                                     |      (System Daemon)        |
+                                     +-----------------------------+
+                                                   |
+                                                   v
+                                           [ ACTIVE WINDOW ]
+
+## File Locations
+
+| Component | Source (Repo) | Deploy Location (System) | Environment |
+| :--- | :--- | :--- | :--- |
+| **Listener** | `scripts/jarvis_listener.py` | (Run from Repo) | **System Python** |
+| **Handler** | `scripts/jarvis_ptt_handler.sh` | `~/scripts/jarvis_ptt_handler.sh` | **Bash** |
+| **Daemon** | `scripts/jarvis_daemon.py` | (Run from Repo) | **Conda Python** |
+| **Transcriber** | `scripts/transcribe.py` | (Run from Repo) | **Conda Python** |
+| **Typer** | `scripts/type_input.py` | (Run from Repo) | **Conda Python** |
+| **Service (L)** | `systemd/user/jarvis-listener.service` | `~/.config/systemd/user/...` | **Systemd** |
+| **Service (D)** | `systemd/user/jarvis.service` | `~/.config/systemd/user/...` | **Systemd** |
+
 ```
-
-*   **Pros:** Near-instant response (<0.5s).
-*   **Cons:** Eats VRAM (approx 1GB-2GB depending on model) constantly. Requires managing a background service (systemd).
-
----
-
-## 3. How to achieve the "Daemon" Model?
-
-You mentioned **"Whisper.cpp"** and **"GPU Memory"**.
-
-1.  **Whisper.cpp Server:**
-    *   `whisper.cpp` comes with a binary called `server`.
-    *   You run `./server -m models/ggml-large-v3.bin --port 8080`.
-    *   It loads the model into RAM/VRAM and stays there.
-    *   Your script just sends a `curl` POST request with the WAV file.
-    *   **Result:** Blazing fast.
-
-2.  **Faster-Whisper Daemon (Python):**
-    *   We write a `jarvis_daemon.py`.
-    *   It loads `faster-whisper` on startup.
-    *   It opens a local unix socket (`/tmp/jarvis.sock`).
-    *   The `Meta+Z` script just sends the filename to that socket.
-
-### Which one for you?
-Since you have an **NVIDIA 3070**, `faster-whisper` (which uses CTranslate2) is often *faster* than `whisper.cpp` on NVIDIA cards because it uses highly optimized CUDA kernels.
-
-**Recommendation:**
-If you want to upgrade, we should build the **Python Daemon**. It gives us more control (e.g., we can add "Wake Word" detection later, or add the "Command Execution" logic easily).
-
-**Would you like to open a new Conductor Track to "Upgrade Jarvis to Daemon Mode"?**

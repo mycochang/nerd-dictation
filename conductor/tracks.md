@@ -16,3 +16,13 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Jarvis Optimization: CPU Migration**
   *Link: [./tracks/jarvis_cpu_migration_20260129/](./tracks/jarvis_cpu_migration_20260129/)*
+
+---
+
+- [x] **Track: Jarvis Push-to-Talk (PTT) Mode**
+  *Link: [./tracks/jarvis_ptt_20260131/](./tracks/jarvis_ptt_20260131/)*
+
+---
+
+- [ ] **Track: Infrastructure: Migrate to UV & Cleanup**
+  *Link: [./tracks/jarvis_uv_migration_20260201/](./tracks/jarvis_uv_migration_20260201/)*

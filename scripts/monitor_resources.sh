@@ -11,6 +11,11 @@ if [ -z "$LOG_FILE" ]; then
     exit 1
 fi
 
+if [ -e "$LOG_FILE" ]; then
+    echo "Error: File '$LOG_FILE' already exists. Refusing to overwrite to prevent data loss."
+    exit 1
+fi
+
 echo "Starting Resource Monitor for $DURATION seconds..."
 echo "Log: $LOG_FILE"
 echo "Timestamp, PID, %CPU, %MEM, VRAM_MiB" > "$LOG_FILE"

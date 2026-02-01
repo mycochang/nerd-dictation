@@ -1,0 +1,8 @@
+{
+  "track_id": "jarvis_uv_migration_20260201",
+  "type": "chore",
+  "status": "new",
+  "created_at": "2026-02-01T20:33:14Z",
+  "updated_at": "2026-02-01T20:33:14Z",
+  "description": "Migrate hybrid Conda/System environment to a unified 'uv' project structure."
+}

@@ -1,17 +1,12 @@
 #!/bin/bash
 
-# Logging
-LOG_FILE="/tmp/jarvis_debug.log"
-echo "$(date): Triggered" >> "$LOG_FILE"
-
-# Configuration
-export YDOTOOL_SOCKET="/tmp/.ydotool_socket"
-export PYTHONPATH="$HOME/repos/nerd-dictation" # Ensure scripts can import each other
-PATH=$PATH:/usr/bin:/usr/local/bin:/home/mchang/miniconda3/bin
-
 # Files
-AUDIO_FILE="/tmp/jarvis_command.wav"
-PID_FILE="/tmp/jarvis.pid"
+RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp}"
+AUDIO_FILE="$RUNTIME_DIR/jarvis_command.wav"
+PID_FILE="$RUNTIME_DIR/jarvis.pid"
+LOG_FILE="$RUNTIME_DIR/jarvis_debug.log"
+
+echo "$(date): Triggered" >> "$LOG_FILE"
 
 # Scripts
 TRANSCRIBER="$HOME/repos/nerd-dictation/scripts/transcribe.py"
