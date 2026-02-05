@@ -1,3 +1,16 @@
+[project]
+name = "jarvis-assistant"
+version = "0.1.0"
+description = "A local voice-to-text assistant with atomic PTT."
+readme = "readme.rst"
+requires-python = ">=3.10"
+dependencies = [
+    "faster-whisper",
+    "sounddevice",
+    "numpy",
+    "evdev",
+]
+
 [tool.black]
 line-length = 119
 target-version = ['py310']

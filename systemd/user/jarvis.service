@@ -1,0 +1,20 @@
+[Unit]
+Description=Jarvis Transcription Daemon
+Requires=jarvis.socket
+After=jarvis.socket
+
+[Service]
+# Path to your conda or system python
+ExecStart=%h/repos/nerd-dictation/.venv/bin/python3 %h/repos/nerd-dictation/scripts/jarvis_daemon.py
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+
+# Security Hardening
+# PrivateTmp=yes # Disabled to allow sharing /tmp/jarvis_command.wav
+# ProtectHome=yes # Disabled to allow reading from home dir if needed
+ProtectSystem=full
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target
