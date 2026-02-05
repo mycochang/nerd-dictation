@@ -7,3 +7,25 @@ __pycache__/
 
 # Fallback location used for the language model.
 /model
+
+# === Internal Development Files (not for public commits) ===
+
+# AI agent configuration (LLM context/instructions)
+AGENTS.md
+GEMINI.md
+
+# Development planning and tracking
+conductor/
+DAEMON_PLAN.md
+
+# Legacy/experimental code (referenced by AGENTS.md)
+_misc/
+
+# Test artifacts (generated audio files)
+test_*.wav
+*.wav.bak
+
+# Local environment
+.opencode/
+.venv/
+*.egg-info/
