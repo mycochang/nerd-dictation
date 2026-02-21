@@ -7,9 +7,9 @@ Jarvis is your "Voice Keyboard". It listens to your voice, transcribes it secure
 
 ---
 
-## getting Best Accuracy from "Tiny" Mode
+## getting Best Accuracy
 
-You are currently running the **tiny.en** model to save CPU cycles. It is fast but can be "dumb". Here is how to speak to it:
+You are currently running the **Turbo** model for high accuracy and fast CPU inference. Here is how to speak to it:
 
 ### 1. Speak Like a News Anchor
 *   **Do:** Enunciate clearly. "Commit these changes."
@@ -45,6 +45,6 @@ Whisper is okay at guessing sentences, but for coding/CLI work, be explicit if y
 *   **Fix:** We moved Jarvis to **CPU Mode**. This should never happen again.
 
 ## System Details
-*   **Model:** `faster-whisper-tiny.en`
-*   **Hardware:** CPU (Int8 Quantization)
+*   **Model:** `Systran/faster-whisper-base.en` (Optimized for speed and accuracy)
+*   **Hardware:** CPU (Int8 Quantization, Capped at 4 Threads)
 *   **Daemon:** Auto-starts on first use, stays active for 1 hour.
