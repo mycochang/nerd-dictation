@@ -1,3 +1,19 @@
+=============================================================================
+🚀 LOOKING FOR THE FASTER-WHISPER MONOLITH?
+=============================================================================
+
+**This experimental branch has been extracted into a standalone, greenfield repository.**
+
+If you are looking for the zero-latency, CPU-only **Faster-Whisper (CTranslate2)** 
+dictation monolith for Linux (Wayland/X11), please visit the dedicated repository:
+
+👉 **https://github.com/mycochang/jarvis-monolith** 👈
+
+The new repository is completely self-contained, isolated via `uv`, natively supports 
+multi-keyboard `evdev` event reading, and requires no fragmented bash scripts.
+
+=============================================================================
+
 ##############
 Nerd Dictation
 ##############
