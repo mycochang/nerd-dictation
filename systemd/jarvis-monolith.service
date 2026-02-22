@@ -1,0 +1,15 @@
+[Unit]
+Description=Jarvis Monolith (Ctrl+Space Dictation)
+After=network.target ydotoold.service
+
+[Service]
+Type=simple
+# Crucial: Must use the uv virtual environment Python
+ExecStart=/home/mchang/repos/nerd-dictation/.venv/bin/python /home/mchang/repos/nerd-dictation/scripts/jarvis_monolith.py
+Restart=always
+RestartSec=3
+# We ensure it has permission to read the raw keyboard devices
+SupplementaryGroups=input
+
+[Install]
+WantedBy=default.target
